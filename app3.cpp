@@ -16,46 +16,65 @@
 // dynamic polymorphism, v-table
 
 #include <iostream>
+#include <vector>
 
-void doIt() { }
-
-struct Fun
+struct Int
 {
-    int volume;
-    float illumination;
+    int value;
 
-    static void doIt() { }
-
-    Fun fun(double how_much)
-    {
-        return Fun{(int)(how_much*volume), (float)(how_much*illumination)};
-    };
+    Int() : value{0} { }
+    Int(int value) : value{value} { }
+    Int(const Int& other) : value{other.value} { }
 };
 
-Fun fun(double how_much, int volume, float illumination)
+struct Huge
 {
-    return Fun{(int)(how_much*volume), (float)(how_much*illumination)};
-}
+    Int x;
+    Int y;
+    std::vector<int> v;
 
-Fun fun(double how_much, Fun f)
-{
-    return Fun{(int)(how_much*f.volume), (float)(how_much*f.illumination)};
-}
+    Huge() : x{10}, y{20}, v(100)
+    {
+        std::cout << "Calisiyor" << std::endl;
+    }
+
+    Huge(const Huge& other) : x{other.x}, y{other.y}, v(other.v)
+    {
+        std::cout << "copy ctor" << std::endl;
+    }
+
+    void operator=(const Huge& right)
+    {
+        x = right.x;
+        y = right.y;
+        v = right.v;
+
+        std::cout << "copy assignment" << std::endl;
+    }
+
+    ~Huge()
+    {
+        std::cout << "Siliyorum" << std::endl;
+    }
+};
 
 
-//Fun fun(double how_much)
-//{
-//    return Fun{(int)(how_much*100), (float)(how_much*1.0f)};
-//}
+
 
 
 int main(int argc, char* argv[])
 {
-    auto f = Fun{100, 10.0f};
-    f.fun(5.0);
+    Huge h; // default construction
+    Huge h2(h); // copy-construction
+    Huge h3 = h2; // copy-construction
 
-    fun(5.0, 100, 10.0f);
-    fun(5.0, f);
+    Huge h4;
+    h4 = h3;
+
+//    int a = 10;
+//    int const * const p = &a;
+//    *p = 20;
+
 
     return 0;
 }
