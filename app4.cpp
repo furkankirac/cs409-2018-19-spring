@@ -55,6 +55,9 @@ struct Huge
     }
 };
 
+int f1() { return 10; }
+int f2() { return 20; }
+
 int main(int argc, char* argv[])
 {
     // a pointer to memory. type is unknown.
@@ -83,6 +86,14 @@ int main(int argc, char* argv[])
     delete[] p6;
 
     {
+        // v1, v2, v3 are l-values (memory addresses are available)
+        auto v1 = f1(); // returned value from f1() is r-value
+        auto v2 = f2(); // returned value from f2() is r-value
+        auto v3 = v1 + v2;
+
+        // v4 is l-value
+        auto v4 = f1() + f2(); // returned value from f1() and f2() are r-values
+
         auto h = Huge{}; // h is in stack, h.x, h.y, h.v are all in stack
 
         std::vector<Huge> v(1000); // Huge instances are allocated in Head memory
