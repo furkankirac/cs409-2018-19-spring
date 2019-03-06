@@ -57,11 +57,17 @@ struct Huge
 
 int main(int argc, char* argv[])
 {
-    Huge h; // default construction
-    Huge h2(h); // copy-construction
-    Huge h3 = h2; // copy-construction
+    auto h = Huge{};
+    //Huge h; // default construction
 
-    Huge h4;
+    auto h2 = Huge{h};
+    //Huge h2(h); // copy-construction
+
+    auto h3 = h2;
+//    Huge h3 = h2; // copy-construction
+
+    auto h4 = Huge{};
+    //Huge h4;
     h4 = h3;
 
 //    int a = 10;
