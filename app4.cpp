@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <vector>
+#include <array>
 
 struct Int
 {
@@ -91,8 +92,29 @@ int main(int argc, char* argv[])
         auto v2 = f2(); // returned value from f2() is r-value
         auto v3 = v1 + v2;
 
+        int* v1_ptr = &v1; // C and old C++
+        v1_ptr++;
+        ++v1_ptr;
+        v1_ptr += 10;
+
+        auto& v1_ref_cpp = v1; // both old C++ and modern C++
+
         // v4 is l-value
         auto v4 = f1() + f2(); // returned value from f1() and f2() are r-values
+
+
+        {
+            int L[100];
+            L[0] = 1000;
+            L[100] = 2000; // out of bounds, UB
+        }
+        {
+            auto L = std::array<int, 100>();
+            L[0] = 1000;
+            L[100] = 2000; // out of bounds, UB, caught in run-time if debug mode compile
+        }
+
+
 
         auto h = Huge{}; // h is in stack, h.x, h.y, h.v are all in stack
 
