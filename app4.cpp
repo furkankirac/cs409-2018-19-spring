@@ -1,6 +1,6 @@
 // almost always auto - AAA rule: move type to the right
 
-// C: free/malloc, old C++: new/delete
+// C: malloc/free, old C++: new/delete
 
 // l-value, r-value
 // l-value references, r-value references
@@ -57,18 +57,38 @@ struct Huge
 
 int main(int argc, char* argv[])
 {
-    auto h = Huge{};
-    //Huge h; // default construction
+    // a pointer to memory. type is unknown.
+    void* p1 = malloc(250000 * sizeof(int));
+    free(p1);
 
-    auto h2 = Huge{h};
-    //Huge h2(h); // copy-construction
+    // pointed type is int
+    int* p2 = (int*)malloc(250000 * sizeof(int));
+    free(p2);
+    int* p2_cpp = new int[250000];
+    //auto p2_cpp = new int[250000]; // left hand modern, right hand old school!
+    delete[] p2_cpp;
 
-    auto h3 = h2;
-//    Huge h3 = h2; // copy-construction
+    // pointed type is int. auto works only if right hand type is ptr to smt.
+    auto* p3 = (int*)malloc(250000 * sizeof(int));
+    free(p3);
 
-    auto h4 = Huge{};
-    //Huge h4;
-    h4 = h3;
+    // same thing with p3. no constraint.
+    auto p4 = (int*)malloc(250000 * sizeof(int));
+    free(p4);
+
+    Huge* p5 = new Huge(); // old C++
+    delete p5;
+
+    Huge* p6 = new Huge[1000]; // old C++
+    delete[] p6;
+
+    {
+        auto h = Huge{}; // h is in stack, h.x, h.y, h.v are all in stack
+
+        std::vector<Huge> v(1000); // Huge instances are allocated in Head memory
+
+        // h is destructed, v is destructed
+    }
 
 //    int a = 10;
 //    int const * const p = &a;
