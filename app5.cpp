@@ -6,9 +6,13 @@
 
 #include <iostream>
 #include <array>
-//#include <algorithm>
+
+#include <utility> // for std::pair
+#include <tuple>
 
 using namespace std;
+
+
 
 template<int nDims, typename T = int>
 struct Vec {
@@ -22,7 +26,7 @@ struct Vec {
         return sum;
     }
 
-    void print() const
+    void print() /*const*/
     {
         cout << "[";
         for(int i=0; i<nDims; ++i) {
@@ -35,6 +39,15 @@ struct Vec {
 
 };
 
+
+template<typename T1, typename T2 = T1>
+struct Pair : public tuple<T1, T2>
+{
+    Pair(const T1 val1, const T2 val2) : tuple<T1, T2>{val1, val2}
+    {
+    }
+};
+
 // ----------------------
 int main(int argc, char* argv[])
 {
@@ -43,6 +56,21 @@ int main(int argc, char* argv[])
     cout << "-----" << endl;
 
     Vec<3, float>{10.3f, 20.0f, 1.2f}.print();
+
+    const auto v = Vec<3>{10, 20, 30};
+
+    auto p1 = Pair<int, float>{5, 10.0f};
+    auto p1b = Pair<int>{5, 20};
+    auto p2 = pair<int, float>{5, 10.0f};
+    p2.first = 20;
+    auto pair_value_first = get<0>(p1);
+
+    auto t1 = tuple<int, int, float, double, char>{10, 20, 0.5f, 23.5, 'f'};
+    auto first_value = get<0>(t1); // int
+    auto third_value = get<2>(t1); // float
+    auto double_value = get<double>(t1); // get the one and only double parameter's value
+
+
 
     return 0;
 }
