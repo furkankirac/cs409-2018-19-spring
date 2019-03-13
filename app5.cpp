@@ -5,6 +5,8 @@
 // dynamic polymorphism, v-table
 
 #include <iostream>
+#include <array>
+//#include <algorithm>
 
 using namespace std;
 
@@ -38,12 +40,13 @@ namespace Better {
 } // namespace Better
 
 namespace EvenBetter {
-    template<int nDims>
+    template<int nDims, typename T = int>
     struct Vec {
-        int values[nDims];
-        int dot_product(const Vec<nDims> b) const
+        array<T, nDims> values;
+
+        auto dot_product(const Vec<nDims, T> b) const
         {
-            auto sum = 0;
+            auto sum = T{};
             for(int i=0; i<nDims; ++i)
                 sum += values[i]*b.values[i];
             return sum;
@@ -87,7 +90,7 @@ int main(int argc, char* argv[])
     cout << EvenBetter::Vec<3>{10, 20, 1}.dot_product({5, 3, 2}) << endl;
     cout << "-----" << endl;
 
-    EvenBetter::Vec<3>{10, 20, 1}.print();
+    EvenBetter::Vec<3, float>{10.3f, 20.0f, 1.2f}.print();
 
     return 0;
 }
