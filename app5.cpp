@@ -2,7 +2,7 @@
 // CV qualifiers: const, volatile
 // const, mutable
 // inheritance
-// dynamic polymorphism, v-table
+// dynamic polymorphism, v-table, __v_ptr attribute
 
 #include <iostream>
 #include <array>
@@ -12,19 +12,19 @@
 
 using namespace std;
 
-
-//typedef int extra_data_t;
-using extra_data_t = int;
+struct VecBase
+{
+    virtual void print() const { }
+    virtual void blabla() const { }
+};
 
 template<int nDims, typename T = int>
-struct Vec {
-    extra_data_t extra_data;
-
+struct __attribute__((packed, aligned(1))) Vec : public VecBase {
+//    char a;
     array<T, nDims> values;
 
-
     template<typename... Ts>
-    Vec(Ts... values) : extra_data{nDims}, values{values...}
+    Vec(Ts... values) : values{values...}
     { }
 
 //    Vec(array<T, nDims> values) : extra_data{nDims}, values{values}
@@ -62,15 +62,12 @@ int main(int argc, char* argv[])
     auto v1 = Vec<2>{10, 20};
     auto v2 = Vec<3>{10, 20, 1};
 
-    auto vec_array = array<void*, 2>{ &v1, &v2 };
+//    auto vec_array = array<VecBase*, 2>{ &v1, &v2 };
+//    for(int i=0; i<2; ++i)
+//        vec_array[i]->print();
 
-    for(int i=0; i<2; ++i) {
-        auto nDims = ((int*)vec_array[i])[0];
-        if(nDims == 2)
-            ((Vec<2>*)vec_array[i])->print(); // (*((Vec<2>*)vec_array[i])).print();
-        else if(nDims == 3)
-            ((Vec<3>*)vec_array[i])->print();
-    }
+    cout << "Size of v1 (2dim) = " << sizeof(v1) << endl;
+    cout << "Size of v2 (3dim) = " << sizeof(v2) << endl;
 
     return 0;
 }
