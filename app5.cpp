@@ -13,12 +13,23 @@
 using namespace std;
 
 
+//typedef int extra_data_t;
+using extra_data_t = int;
 
 template<int nDims, typename T = int>
 struct Vec {
-    int extra_data;
+    extra_data_t extra_data;
 
     array<T, nDims> values;
+
+
+    template<typename... Ts>
+    Vec(Ts... values) : extra_data{nDims}, values{values...}
+    { }
+
+//    Vec(array<T, nDims> values) : extra_data{nDims}, values{values}
+//    {
+//    }
 
     auto dot_product(const Vec<nDims, T> b) const
     {
@@ -28,7 +39,7 @@ struct Vec {
         return sum;
     }
 
-    void print() /*const*/
+    void print() const
     {
         cout << "[";
         for(int i=0; i<nDims; ++i) {
@@ -44,10 +55,22 @@ struct Vec {
 // ----------------------
 int main(int argc, char* argv[])
 {
-    cout << Vec<2>{2, 10, 20}.dot_product({2, 5, 3}) << endl;
-    cout << Vec<3>{3, 10, 20, 1}.dot_product({3, 5, 3, 2}) << endl;
+    cout << Vec<2>{10, 20}.dot_product({5, 3}) << endl;
+    cout << Vec<3>{10, 20, 1}.dot_product({5, 3, 2}) << endl;
     cout << "-----" << endl;
 
+    auto v1 = Vec<2>{10, 20};
+    auto v2 = Vec<3>{10, 20, 1};
+
+    auto vec_array = array<void*, 2>{ &v1, &v2 };
+
+    for(int i=0; i<2; ++i) {
+        auto nDims = ((int*)vec_array[i])[0];
+        if(nDims == 2)
+            ((Vec<2>*)vec_array[i])->print(); // (*((Vec<2>*)vec_array[i])).print();
+        else if(nDims == 3)
+            ((Vec<3>*)vec_array[i])->print();
+    }
 
     return 0;
 }
