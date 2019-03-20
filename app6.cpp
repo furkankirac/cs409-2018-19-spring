@@ -18,17 +18,21 @@
 
 #include <iostream>
 #include <memory>
-//#include <vector>
+#include <vector>
 #include <stdint.h>
 //#include <assert.h>
 
 using namespace std;
 
-class Image
+struct MatrixCore
+{
+    virtual void load() = 0;
+};
+
+template<typename T>
+class Matrix : public MatrixCore
 {
 public:
-    using T = uint8_t; // mapped to unsigned char in background. sending to cout prints a char
-
     int nRows, nCols;
     T* mem;
 
@@ -48,33 +52,33 @@ public:
         printMemoryUsage();
     }
 
-    Image(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(numElements() == 0 ? nullptr : new T[numElements()])
+    Matrix(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(numElements() == 0 ? nullptr : new T[numElements()])
     {
         cout << "created" << endl;
         printMemoryUsage();
     }
 
-    Image() : Image(0, 0) // delegated ctor
+    Matrix() : Matrix(0, 0) // delegated ctor
     {
     }
 
-    Image(const Image& other) : Image(other.nRows, other.nCols)
+    Matrix(const Matrix& other) : Matrix(other.nRows, other.nCols)
     {
         copy(other.mem, other.mem + other.numElements(), mem);
     }
 
-    void operator=(const Image& other)
+    void operator=(const Matrix& other)
     {
         init(other.nRows, other.nCols);
         copy(other.mem, other.mem + other.numElements(), mem);
     }
 
-    Image(Image&& other) : nRows(other.nRows), nCols(other.nCols), mem(other.mem)
+    Matrix(Matrix&& other) : nRows(other.nRows), nCols(other.nCols), mem(other.mem)
     {
         other.mem = nullptr;
     }
 
-    void operator=(Image&& other)
+    void operator=(Matrix&& other)
     {
         clear();
         nRows = other.nRows;
@@ -101,13 +105,31 @@ public:
         cout << "memory cleared" << endl;
     }
 
-    ~Image()
+    ~Matrix()
     {
         clear();
         cout << "destroyed" << endl;
     }
 
+    void load() override
+    {
+        cout << "Matrix loaded!" << endl;
+    }
+
 };
+
+
+struct Image : public Matrix<uint8_t>
+{
+    using Matrix<uint8_t>::Matrix;
+    using Matrix<uint8_t>::operator=;
+
+    void load() override
+    {
+        cout << "Image loaded!" << endl;
+    }
+};
+
 
 // ----------------------
 int main(int argc, char* argv[])
@@ -116,15 +138,26 @@ int main(int argc, char* argv[])
 //    auto unique_image = unique_ptr<Image>(new Image(10, 20));
 //    auto img1 = make_unique<Image>(10, 20);
 
-    auto img1 = make_shared<Image>(100, 200);
-    auto img2 = img1;
-    auto img3 = img1;
+    Matrix<uint16_t> mat(10, 10);
+    Image img1;
+    Image img2;
 
-    (*img1)(5, 6) = 100;
+    auto objects = vector<MatrixCore*>{ &img1, &mat, &img2 };
+    for(auto obj : objects)
+    {
+        obj->load();
+    }
 
-    cout << (int)(*img1)(5, 6) << endl;
-    cout << (int)(*img2)(5, 6) << endl;
-    cout << (int)(*img3)(5, 6) << endl;
+
+//    auto img1 = make_shared<Image>(100, 200);
+//    auto img2 = img1;
+//    auto img3 = img1;
+
+//    (*img1)(5, 6) = 100;
+
+//    cout << (int)(*img1)(5, 6) << endl;
+//    cout << (int)(*img2)(5, 6) << endl;
+//    cout << (int)(*img3)(5, 6) << endl;
 
     return 0;
 }
