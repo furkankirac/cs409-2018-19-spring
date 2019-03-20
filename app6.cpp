@@ -41,7 +41,7 @@ public:
         cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (numElements()*sizeof(T)) << " bytes" << endl;
     }
 
-    size_t numElements() const { return (size_t)(nRows*nCols); }
+    size_t numElements() const { return static_cast<size_t>(nRows*nCols); }
 
     void init(int nRows, int nCols)
     {
@@ -90,7 +90,8 @@ public:
     T& operator()(int row, int col)
     {
         static T dummy;
-        if(mem == nullptr)
+//        if(mem == nullptr)
+        if(!mem)
         {
             cout << "OOOPS!" << endl;
             return dummy;
@@ -156,7 +157,9 @@ int main(int argc, char* argv[])
     auto objects = vector<MatrixCore*>{ &img1, &mat, &img2 };
     for(auto obj : objects)
     {
-        obj->load();
+        auto img_ptr = dynamic_cast<Image*>(obj);
+        if(img_ptr/* != nullptr*/)
+            img_ptr->load();
     }
 
 
