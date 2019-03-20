@@ -118,11 +118,20 @@ public:
 
 };
 
-
-struct Image : public Matrix<uint8_t>
+struct Color
 {
-    using Matrix<uint8_t>::Matrix;
-    using Matrix<uint8_t>::operator=;
+    uint8_t r, g, b;
+
+    Color() : Color(0) { }
+    /*explicit */Color(uint8_t illum) : r(illum), g(illum), b(illum) { }
+    Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) { }
+};
+
+
+struct Image : public Matrix<Color>
+{
+    using Matrix<Color>::Matrix;
+    using Matrix<Color>::operator=;
 
     void load() override
     {
@@ -141,6 +150,8 @@ int main(int argc, char* argv[])
     Matrix<uint16_t> mat(10, 10);
     Image img1;
     Image img2;
+    img1(5, 6) = Color(10, 20, 255);
+    img1(5, 6) = (char)100;
 
     auto objects = vector<MatrixCore*>{ &img1, &mat, &img2 };
     for(auto obj : objects)
