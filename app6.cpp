@@ -63,16 +63,36 @@ public:
         copy(other.mem, other.mem + other.numElements(), mem);
     }
 
-    T get(int row, int col) const
+    void operator=(const Image& other)
     {
+        init(other.nRows, other.nCols);
+        copy(other.mem, other.mem + other.numElements(), mem);
+    }
+
+    Image(Image&& other) : nRows(other.nRows), nCols(other.nCols), mem(other.mem)
+    {
+        other.mem = nullptr;
+    }
+
+    void operator=(Image&& other)
+    {
+        clear();
+        nRows = other.nRows;
+        nCols = other.nCols;
+        mem = other.mem;
+        other.mem = nullptr;
+    }
+
+    T& operator()(int row, int col)
+    {
+        static T dummy;
+        if(mem == nullptr)
+        {
+            cout << "OOOPS!" << endl;
+            return dummy;
+        }
         return mem[row*nCols+col];
     }
-
-    void set(int row, int col, T value)
-    {
-        mem[row*nCols+col] = value;
-    }
-
 
     void clear()
     {
@@ -92,13 +112,26 @@ public:
 // ----------------------
 int main(int argc, char* argv[])
 {
-    Image img1(10, 20); // allocate image of 10x20
-    img1.set(5, 6, 100);
+    auto img1 = Image(10, 20); // allocate image of 10x20
+    img1(5, 6) = 100;
 
     Image img2(img1); // copy-ctor
+    Image img3(move(img1)); // move-ctor. equiv. to: Image img3((Image&&)img1)
 
-    cout << (int)img1.get(5, 6) << endl;
-    cout << (int)img2.get(5, 6) << endl;
+    Image img4;
+    img4 = img2; // copy assign
+
+    Image img5(100, 200);
+    img5 = move(img4); // move assign. img4 is crippled.
+
+
+//    Image img3 = img1; // copy-ctor
+//    Image img4;
+//    img4 = img1;
+
+    cout << (int)img1(5, 6) << endl;
+    cout << (int)img2(5, 6) << endl;
+    cout << (int)img3(5, 6) << endl;
 
     return 0;
 }
