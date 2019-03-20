@@ -37,14 +37,14 @@ public:
         cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (numElements()*sizeof(T)) << " bytes" << endl;
     }
 
-    int numElements() const { return nRows*nCols; }
+    size_t numElements() const { return (size_t)(nRows*nCols); }
 
     void init(int nRows, int nCols)
     {
         clear();
         this->nRows = nRows;
         this->nCols = nCols;
-        mem = new T[nRows*nCols];
+        mem = new T[numElements()];
         printMemoryUsage();
     }
 
@@ -57,6 +57,22 @@ public:
     Image() : Image(0, 0) // delegated ctor
     {
     }
+
+    Image(const Image& other) : Image(other.nRows, other.nCols)
+    {
+        copy(other.mem, other.mem + other.numElements(), mem);
+    }
+
+    T get(int row, int col) const
+    {
+        return mem[row*nCols+col];
+    }
+
+    void set(int row, int col, T value)
+    {
+        mem[row*nCols+col] = value;
+    }
+
 
     void clear()
     {
@@ -76,10 +92,13 @@ public:
 // ----------------------
 int main(int argc, char* argv[])
 {
-    Image img(10, 20); // allocate image of 10x20
-    img.clear(); // clears it
+    Image img1(10, 20); // allocate image of 10x20
+    img1.set(5, 6, 100);
 
-    img.init(30, 10); // reinitializes already created img
+    Image img2(img1); // copy-ctor
+
+    cout << (int)img1.get(5, 6) << endl;
+    cout << (int)img2.get(5, 6) << endl;
 
     return 0;
 }
