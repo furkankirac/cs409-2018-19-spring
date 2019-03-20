@@ -17,7 +17,7 @@
 // template-template types, template auto, type constructors
 
 #include <iostream>
-//#include <memory>
+#include <memory>
 //#include <vector>
 #include <stdint.h>
 //#include <assert.h>
@@ -112,26 +112,19 @@ public:
 // ----------------------
 int main(int argc, char* argv[])
 {
-    auto img1 = Image(10, 20); // allocate image of 10x20
-    img1(5, 6) = 100;
+//    unique_ptr<Image> unique_image(new Image(10, 20));
+//    auto unique_image = unique_ptr<Image>(new Image(10, 20));
+//    auto img1 = make_unique<Image>(10, 20);
 
-    Image img2(img1); // copy-ctor
-    Image img3(move(img1)); // move-ctor. equiv. to: Image img3((Image&&)img1)
+    auto img1 = make_shared<Image>(100, 200);
+    auto img2 = img1;
+    auto img3 = img1;
 
-    Image img4;
-    img4 = img2; // copy assign
+    (*img1)(5, 6) = 100;
 
-    Image img5(100, 200);
-    img5 = move(img4); // move assign. img4 is crippled.
-
-
-//    Image img3 = img1; // copy-ctor
-//    Image img4;
-//    img4 = img1;
-
-    cout << (int)img1(5, 6) << endl;
-    cout << (int)img2(5, 6) << endl;
-    cout << (int)img3(5, 6) << endl;
+    cout << (int)(*img1)(5, 6) << endl;
+    cout << (int)(*img2)(5, 6) << endl;
+    cout << (int)(*img3)(5, 6) << endl;
 
     return 0;
 }
