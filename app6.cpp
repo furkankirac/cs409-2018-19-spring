@@ -32,11 +32,6 @@ public:
     int nRows, nCols;
     T* mem;
 
-    Image() : nRows(0), nCols(0), mem(nullptr)
-    {
-        cout << "created" << endl;
-    }
-
     void init(int nRows, int nCols)
     {
         clear();
@@ -46,10 +41,14 @@ public:
         cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (nRows*nCols*sizeof(T)) << " bytes" << endl;
     }
 
-    Image(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(new T[nRows*nCols])
+    Image(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(nRows*nCols == 0 ? nullptr : new T[nRows*nCols])
     {
         cout << "created" << endl;
         cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (nRows*nCols*sizeof(T)) << " bytes" << endl;
+    }
+
+    Image() : Image(0, 0) // delegated ctor
+    {
     }
 
     void clear()
