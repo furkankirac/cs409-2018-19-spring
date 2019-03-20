@@ -19,13 +19,61 @@
 #include <iostream>
 //#include <memory>
 //#include <vector>
-//#include <stdint.h>
+#include <stdint.h>
 //#include <assert.h>
 
 using namespace std;
 
+class Image
+{
+public:
+    using T = uint8_t; // mapped to unsigned char in background. sending to cout prints a char
+
+    int nRows, nCols;
+    T* mem;
+
+    Image() : nRows(0), nCols(0), mem(nullptr)
+    {
+        cout << "created" << endl;
+    }
+
+    void init(int nRows, int nCols)
+    {
+        clear();
+        this->nRows = nRows;
+        this->nCols = nCols;
+        mem = new T[nRows*nCols];
+        cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (nRows*nCols*sizeof(T)) << " bytes" << endl;
+    }
+
+    Image(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(new T[nRows*nCols])
+    {
+        cout << "created" << endl;
+        cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (nRows*nCols*sizeof(T)) << " bytes" << endl;
+    }
+
+    void clear()
+    {
+        delete[] mem;
+        mem = nullptr;
+        cout << "memory cleared" << endl;
+    }
+
+    ~Image()
+    {
+        clear();
+        cout << "destroyed" << endl;
+    }
+
+};
+
 // ----------------------
 int main(int argc, char* argv[])
 {
+    Image img(10, 20); // allocate image of 10x20
+    img.clear(); // clears it
+
+    img.init(30, 10); // reinitializes already created img
+
     return 0;
 }
