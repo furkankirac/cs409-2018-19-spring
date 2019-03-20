@@ -32,19 +32,26 @@ public:
     int nRows, nCols;
     T* mem;
 
+    void printMemoryUsage() const
+    {
+        cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (numElements()*sizeof(T)) << " bytes" << endl;
+    }
+
+    int numElements() const { return nRows*nCols; }
+
     void init(int nRows, int nCols)
     {
         clear();
         this->nRows = nRows;
         this->nCols = nCols;
         mem = new T[nRows*nCols];
-        cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (nRows*nCols*sizeof(T)) << " bytes" << endl;
+        printMemoryUsage();
     }
 
-    Image(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(nRows*nCols == 0 ? nullptr : new T[nRows*nCols])
+    Image(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(numElements() == 0 ? nullptr : new T[numElements()])
     {
         cout << "created" << endl;
-        cout << "memory allocated: (" << nRows << ", " << nCols << ") = " << (nRows*nCols*sizeof(T)) << " bytes" << endl;
+        printMemoryUsage();
     }
 
     Image() : Image(0, 0) // delegated ctor
