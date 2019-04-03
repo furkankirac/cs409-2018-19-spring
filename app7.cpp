@@ -25,6 +25,7 @@
 // curiously recurring template pattern (CRTP)
 
 #include <iostream>
+#include <functional>
 #include <stdint.h>
 
 #include "Matrix.h"
@@ -41,45 +42,24 @@ using namespace std;
 //    cout << (int)col.r << ":" << (int)col.g << ":" << (int)col.b;
 //}
 
-////typedef void (*PrintStyle_t)(const Color&);
-//using PrintStyle_t = void (*)(const Color&);
 
-//void printImage(const Image& img, PrintStyle_t printStyler)
-//{
-//    for(int i=0; i<img.nRows; ++i)
-//    {
-//        for(int j=0; j<img.nCols; ++j)
-//        {
-//            printStyler(img(i, j));
-//            if(j != img.nCols-1)
-//                cout << "|";
-//        }
-//        cout << endl;
-//    }
-//}
-
-struct PrintColorWithStyle
+struct PrintColorWithStyleA
 {
-    virtual void operator()(const Color&) const = 0;
-};
-
-struct PrintColorWithStyleA : public PrintColorWithStyle
-{
-    void operator()(const Color& col) const override
+    auto operator()(const Color& col) const
     {
         cout << (int)col.r << "," << (int)col.g << "," << (int)col.b;
     }
 };
 
-struct PrintColorWithStyleB : public PrintColorWithStyle
-{
-    void operator()(const Color& col) const override
-    {
-        cout << (int)col.r << ":" << (int)col.g << ":" << (int)col.b;
-    }
-};
+//struct PrintColorWithStyleB
+//{
+//    void operator()(const Color& col) const
+//    {
+//        cout << (int)col.r << ":" << (int)col.g << ":" << (int)col.b;
+//    }
+//};
 
-void printImage(const Image& img, const PrintColorWithStyle& printStyler)
+void printImage(const Image& img, function<void(const Color&)> printStyler)
 {
     for(int i=0; i<img.nRows; ++i)
     {
@@ -101,10 +81,19 @@ int main(int argc, char* argv[])
 //    printImage(img, printColorWithStyleA);
 //    cout << "------" << endl;
 //    printImage(img, printColorWithStyleB);
+//    cout << "++++++" << endl;
+//    printImage(img, PrintColorWithStyleA{});
+//    cout << "------" << endl;
+//    printImage(img, PrintColorWithStyleB{});
+//    cout << "++++++" << endl;
 
-    printImage(img, PrintColorWithStyleA{});
-    cout << "------" << endl;
-    printImage(img, PrintColorWithStyleB{});
+    char separator = '_';
+
+    auto printStyler = [=](const Color& col) {
+        cout << (int)col.r << separator << (int)col.g << separator << (int)col.b;
+    };
+
+    printImage(img, printStyler);
 
     return 0;
 }
