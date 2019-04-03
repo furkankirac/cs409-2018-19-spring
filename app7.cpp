@@ -31,10 +31,42 @@
 
 using namespace std;
 
+void printColorWithStyleA(const Color& col)
+{
+    cout << (int)col.r << "," << (int)col.g << "," << (int)col.b;
+}
+
+void printColorWithStyleB(const Color& col)
+{
+    cout << (int)col.r << ":" << (int)col.g << ":" << (int)col.b;
+}
+
+
+//typedef void (*PrintStyle_t)(const Color&);
+using PrintStyle_t = void (*)(const Color&);
+
+void printImage(const Image& img, PrintStyle_t printStyler)
+{
+    for(int i=0; i<img.nRows; ++i)
+    {
+        for(int j=0; j<img.nCols; ++j)
+        {
+            printStyler(img(i, j));
+            if(j != img.nCols-1)
+                cout << "|";
+        }
+        cout << endl;
+    }
+}
+
 // ----------------------
 int main(int argc, char* argv[])
 {
-    Image img(10, 10);
+    auto img = Image{10, 10};
+    img(5, 5) = 100;
+    printImage(img, printColorWithStyleA);
+    cout << "------" << endl;
+    printImage(img, printColorWithStyleB);
 
     return 0;
 }

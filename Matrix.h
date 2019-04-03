@@ -67,7 +67,7 @@ public:
         other.mem = nullptr;
     }
 
-    T& operator()(int row, int col)
+    T& operator()(int row, int col) const
     {
         static T dummy;
 //        if(mem == nullptr)
