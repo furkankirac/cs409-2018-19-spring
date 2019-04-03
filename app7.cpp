@@ -59,9 +59,10 @@ struct PrintColorWithStyleA
 //    }
 //};
 
-template<typename FUNC>
-void printImage(const Image& img, FUNC printStyler)
+auto printImage = [](const Image& img, auto printStyler)
 {
+    using FUNC = decltype(printStyler);
+
     for(int i=0; i<img.nRows; ++i)
     {
         for(int j=0; j<img.nCols; ++j)
@@ -72,7 +73,7 @@ void printImage(const Image& img, FUNC printStyler)
         }
         cout << endl;
     }
-}
+};
 
 // ----------------------
 int main(int argc, char* argv[])
