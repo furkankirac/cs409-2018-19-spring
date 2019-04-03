@@ -31,21 +31,55 @@
 
 using namespace std;
 
-void printColorWithStyleA(const Color& col)
+//void printColorWithStyleA(const Color& col)
+//{
+//    cout << (int)col.r << "," << (int)col.g << "," << (int)col.b;
+//}
+
+//void printColorWithStyleB(const Color& col)
+//{
+//    cout << (int)col.r << ":" << (int)col.g << ":" << (int)col.b;
+//}
+
+////typedef void (*PrintStyle_t)(const Color&);
+//using PrintStyle_t = void (*)(const Color&);
+
+//void printImage(const Image& img, PrintStyle_t printStyler)
+//{
+//    for(int i=0; i<img.nRows; ++i)
+//    {
+//        for(int j=0; j<img.nCols; ++j)
+//        {
+//            printStyler(img(i, j));
+//            if(j != img.nCols-1)
+//                cout << "|";
+//        }
+//        cout << endl;
+//    }
+//}
+
+struct PrintColorWithStyle
 {
-    cout << (int)col.r << "," << (int)col.g << "," << (int)col.b;
-}
+    virtual void operator()(const Color&) const = 0;
+};
 
-void printColorWithStyleB(const Color& col)
+struct PrintColorWithStyleA : public PrintColorWithStyle
 {
-    cout << (int)col.r << ":" << (int)col.g << ":" << (int)col.b;
-}
+    void operator()(const Color& col) const override
+    {
+        cout << (int)col.r << "," << (int)col.g << "," << (int)col.b;
+    }
+};
 
+struct PrintColorWithStyleB : public PrintColorWithStyle
+{
+    void operator()(const Color& col) const override
+    {
+        cout << (int)col.r << ":" << (int)col.g << ":" << (int)col.b;
+    }
+};
 
-//typedef void (*PrintStyle_t)(const Color&);
-using PrintStyle_t = void (*)(const Color&);
-
-void printImage(const Image& img, PrintStyle_t printStyler)
+void printImage(const Image& img, const PrintColorWithStyle& printStyler)
 {
     for(int i=0; i<img.nRows; ++i)
     {
@@ -64,9 +98,13 @@ int main(int argc, char* argv[])
 {
     auto img = Image{10, 10};
     img(5, 5) = 100;
-    printImage(img, printColorWithStyleA);
+//    printImage(img, printColorWithStyleA);
+//    cout << "------" << endl;
+//    printImage(img, printColorWithStyleB);
+
+    printImage(img, PrintColorWithStyleA{});
     cout << "------" << endl;
-    printImage(img, printColorWithStyleB);
+    printImage(img, PrintColorWithStyleB{});
 
     return 0;
 }
