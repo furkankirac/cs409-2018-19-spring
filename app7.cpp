@@ -59,7 +59,8 @@ struct PrintColorWithStyleA
 //    }
 //};
 
-void printImage(const Image& img, function<void(const Color&)> printStyler)
+template<typename FUNC>
+void printImage(const Image& img, FUNC printStyler)
 {
     for(int i=0; i<img.nRows; ++i)
     {
@@ -92,8 +93,11 @@ int main(int argc, char* argv[])
     auto printStyler = [=](const Color& col) {
         cout << (int)col.r << separator << (int)col.g << separator << (int)col.b;
     };
-
     printImage(img, printStyler);
+
+    printImage(img, [=](const Color& col) {
+        cout << (int)col.r << "/" << (int)col.g << "/" << (int)col.b;
+    });
 
     return 0;
 }
