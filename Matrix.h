@@ -23,17 +23,30 @@ public:
 
     size_t numElements() const { return static_cast<size_t>(nRows*nCols); }
 
+    void fillWithZeroes()
+    {
+        if(!mem)
+            return;
+        auto nElems = numElements();
+        auto ptr = mem;
+        for(int i=0; i<nElems; ++i, ++ptr)
+            *ptr = 0;
+    }
+
     void init(int nRows, int nCols)
     {
         clear();
         this->nRows = nRows;
         this->nCols = nCols;
         mem = new T[numElements()];
+        fillWithZeroes();
+
         printMemoryUsage();
     }
 
     Matrix(int nRows, int nCols) : nRows(nRows), nCols(nCols), mem(numElements() == 0 ? nullptr : new T[numElements()])
     {
+        fillWithZeroes();
         std::cout << "created" << std::endl;
         printMemoryUsage();
     }
