@@ -41,21 +41,31 @@ void printAll_old(const char* title, ...)
     }
 }
 
+template<typename T>
+inline void PRINT(const T& value) { cout << value << endl; }
 
-void print() { }
-
-template<typename First, typename ... Rest> // First is a type, Rest is a lot of types (parameter pack)
-inline void print(First first, Rest ... rest)
+template<typename ... Ts>
+inline void print(Ts ... values)
 {
-    cout << first << endl;
-    print(rest...); // parameter pack expansion
+    (void)initializer_list<int>{ (PRINT(values), 0)... };
 }
+
+
 
 // ----------------------
 int main(int argc, char* argv[])
 {
-    print(10, "hello", 20.0); // int, const char*, double
+    auto a = initializer_list<int>{100, 200, 300};
+    int i, j, k;
+    i = 5, j=i, k=i+j; // comma trick
 
+
+//    (void)initializer_list<int>{ (PRINT("hello"), 0)  };
+
+
+
+
+    print(10, "hello", 20.0); // int, const char*, double
 //    print("hello", 20.0); // const char*, double
 //    print(20.0); // double
 //    print(); //
