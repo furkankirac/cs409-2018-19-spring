@@ -41,15 +41,18 @@ void printAll_old(const char* title, ...)
     }
 }
 
-template<typename T>
-inline void PRINT(const T& value) { cout << value << endl; }
+//template<typename ... Ts>
+//inline void print(Ts ... values)
+//{
+//    (void)initializer_list<int>{ (cout << values << endl, 0)... };
+//}
 
 template<typename ... Ts>
 inline void print(Ts ... values)
 {
-    (void)initializer_list<int>{ (PRINT(values), 0)... };
+//    (cout << ... << values); // fold expression
+    ((cout << values << endl), ...);
 }
-
 
 
 // ----------------------
