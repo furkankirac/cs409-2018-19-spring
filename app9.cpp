@@ -22,32 +22,48 @@ using namespace std;
 
 struct Foo
 {
-    Foo(int a, int b)
-    {
-        cout << "I have two integer parameters passed." << endl;
-    }
-
-    Foo(initializer_list<int> list)
-    {
-
-    }
-
+    Foo(int a, int b) { cout << "I have two integer parameters passed." << endl; }
+    Foo(initializer_list<int> list) { }
 };
 
+// printf("here comes a decimal: %d, and this is a string %s\n", "blabla", 5); // oops problem
+
+void printAll_old(const char* title, ...)
+{
+    va_list args;
+    va_start(args, title);
+    while(true)
+    {
+        int value = va_arg(args, int);
+        if(value == 0)
+            break;
+        cout << value << endl;
+    }
+}
+
+
+void print() { }
+
+template<typename First, typename ... Rest> // First is a type, Rest is a lot of types (parameter pack)
+inline void print(First first, Rest ... rest)
+{
+    cout << first << endl;
+    print(rest...); // parameter pack expansion
+}
 
 // ----------------------
 int main(int argc, char* argv[])
 {
-    auto foo = Foo(10, 20);
+    print(10, "hello", 20.0); // int, const char*, double
 
-    auto v1 = vector<int>{10, 20, 30}; // a vector containing 3 integers whose values are 10, 20, 30
-    auto v2 = vector<int>{10}; // a vector containing 1 integer whose value is 10
-    auto v3 = vector<int>(10); // a vector containing 10 integers whose values are 0.
+//    print("hello", 20.0); // const char*, double
+//    print(20.0); // double
+//    print(); //
 
-    auto a = std::initializer_list<int>{1, 5, 10};
 
-    for(int a : {10, 20, 30}) // {10, 20, 30} is now deduces as initializer_list<int>
-        cout << a << endl;
+//    printAll_old("title", 500, 100, 200, 1000, 2000, 3000, 0);
+
+//    auto foo = Foo(10, 20);
 
     return 0;
 }
