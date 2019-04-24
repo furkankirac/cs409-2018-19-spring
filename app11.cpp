@@ -13,6 +13,7 @@
 // CRTP: curiously recurring template pattern
 
 // union, std::variant
+
 // std::map, std::any
 // structured bindings
 
@@ -21,22 +22,28 @@
 
 using namespace std;
 
-struct Base
+template<typename Derived>
+class Base
 {
-    virtual void print() const = 0;
+public:
+    void print() const
+    {
+        // this is Base*, but we already know that it is a Derived*
+        ((Derived*)this)->PRINT();
+    }
 };
 
-struct Foo : public Base
+struct Foo : public Base<Foo>
 {
-    void print() const override
+    void PRINT() const
     {
         cout << "Foo" << endl;
     }
 };
 
-struct Bar : public Base
+struct Bar : public Base<Bar>
 {
-    void print() const override
+    void PRINT() const
     {
         cout << "Bar" << endl;
     }
@@ -46,12 +53,10 @@ struct Bar : public Base
 // ----------------------
 int main(int argc, char* argv[])
 {
-    auto f1 = Foo{};
-    auto f2 = Foo{};
-    auto b1 = Bar{};
-    auto v = vector<Base*>{&f1, &f2, &b1};
-    for(auto ptr : v)
-        ptr->print();
+    auto f = Foo{};
+    f.print();
+    auto b = Bar{};
+    b.print();
 
     return 0;
 }
