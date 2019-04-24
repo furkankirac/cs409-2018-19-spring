@@ -21,35 +21,59 @@
 
 using namespace std;
 
-class Bar;
-class Foo
+struct Dummy
 {
-    int value;
-    Foo() {}
-public:
-    friend bool getValues(const Foo&, const Bar&);
+    size_t  size;
+    int*    mem;
 
-//    int getValue() const { return value; }
+    Dummy() : size{0}, mem{nullptr} {
+        cout << "default c-tor" << endl;
+    }
+    Dummy(const Dummy& other) : size(other.size)
+    {
+        cout << "copy c-tor" << endl;
+
+        mem = new int[size];
+        std::copy(other.mem, other.mem + other.size, mem);
+    }
+    ~Dummy()
+    {
+        cout << "d-tor" << endl;
+        delete[] mem;
+        size = 0;
+    }
+
+    friend inline void swap(Dummy& first, Dummy& second)
+    {
+        using std::swap;
+
+        swap(first.size, second.size);
+        swap(first.mem, second.mem);
+    }
+
+    Dummy(Dummy&& other) : Dummy() // move c-tor
+    {
+        cout << "move c-tor" << endl;
+        swap(*this, other);
+    }
+
+    void operator=(Dummy other) // copy assign
+    {
+        cout << "assignment" << endl;
+        swap(*this, other);
+    }
 };
 
-class Bar
+Dummy func(int i)
 {
-    int value;
-public:
-    Bar() {}
-    friend bool getValues(const Foo&, const Bar&);
-//    int getValue() const { return value; }
-};
-
-bool getValues(const Foo& f, const Bar& b)
-{
-    return f.value > b.value;
+    auto d = Dummy{};
+    return d;
 }
-
-
 
 // ----------------------
 int main(int argc, char* argv[])
 {
+    auto a = func(10);
+
     return 0;
 }
