@@ -21,6 +21,33 @@
 
 using namespace std;
 
+class Bar;
+class Foo
+{
+    int value;
+    Foo() {}
+public:
+    friend bool getValues(const Foo&, const Bar&);
+
+//    int getValue() const { return value; }
+};
+
+class Bar
+{
+    int value;
+public:
+    Bar() {}
+    friend bool getValues(const Foo&, const Bar&);
+//    int getValue() const { return value; }
+};
+
+bool getValues(const Foo& f, const Bar& b)
+{
+    return f.value > b.value;
+}
+
+
+
 // ----------------------
 int main(int argc, char* argv[])
 {
