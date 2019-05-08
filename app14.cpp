@@ -38,45 +38,34 @@ struct Lambdas : public Lambda1, public Lambda2, public Lambda3
 };
 
 
-template<typename ... Ts>
-struct overloaded : public Ts...
-{
-    using Ts::operator()...;
-};
-
-
-
+template<typename ... Ts> struct overloaded : public Ts... { using Ts::operator()...; };
+template<typename ... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 // ----------------------
 int main(int argc, char* argv[])
 {
     using var_t = variant<int, float, string>;
 
-    int i = 5;
-
-//    auto l1 = Lambda1{};
-    auto l1 = [](int value) { cout << "int: " << value << endl; };
-//    auto l2 = Lambda2{};
-    auto l2 = [](float value) { cout << "float: " << value << endl; };
-//    auto l3 = Lambda3{};
-    auto l3 = [](const string& value) { cout << "string: " << value << endl; };
-
-    //    auto ls = Lambdas{};
-//    auto ls = overloaded<decltype(l1), decltype(l2), decltype(l3)>{};
-
-    l1(10);
-    l2(10.3f);
-    l3("hello");
-
-//    ls(10);
-//    ls(10.3f);
-//    ls("hello");
-
-
     auto v = vector<var_t>{10.3f, "hello", 10, "world"};
     for(const auto& var : v)
     {
+        visit(overloaded{
+                  [](int value) { cout << "int: " << value << endl; },
+                  [](float value) { cout << "float: " << value << endl; },
+                  [](const string& value) { cout << "string: " << value << endl; }
+                  },
+              var
+              );
+    }
 
+    auto a = vector<any>{10, 5.3, 3.14f, "dsfkjbkd", "djfbvakjds"s};
+    for(auto A : a)
+    {
+        try {
+            auto i = any_cast<int>(A);
+            cout << "ANY int: " << i << endl;
+        } catch (...) {
+        }
     }
 
 
