@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
+cmake_policy(SET CMP0025 NEW)
 
 project(advcpp)
 
-#SET(CMAKE_CXX_STANDARD 17)
-#SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-#SET(CMAKE_CXX_EXTENSIONS ON)
-
-SET(CMAKE_CXX_FLAGS "-std=c++17")
+SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(app1 "app1.cpp")
 add_executable(app2 "app2.cpp")
@@ -22,3 +21,4 @@ add_executable(app11 "app11.cpp")
 add_executable(app12 "app12.cpp")
 add_executable(app13 "app13.cpp")
 add_executable(app14 "app14.cpp")
+add_executable(app15 "app15.cpp")
